@@ -51,6 +51,8 @@ pip install bytepiece==0.6.1
 
 All source code of BytePiece is actually in a single file, including `Trainer` and `Tokenizer` two classes, corresponding to training and tokenization respectively.
 
+The pipeline script file is example.py, which includes training the model, using it directly, calling SentencePiece, and calling HuggingFace/Tokenizers. If it is for export calling, after exporting the corresponding model, load and call the exported model according to the usage of SentencePiece and HuggingFace/Tokenizers, without the need to install BytePiece.
+
 ### Training
 
 To train Tokenizer, you just need to import the `Trainer` class:
@@ -129,6 +131,11 @@ In the first table, the dataset has a shorter average length, BytePiece is slowe
 ## Download
 
 To download the open-source BytePiece model, please go to [models](https://github.com/bojone/bytepiece/tree/main/models).
+
+## External Usage
+see `example.py`
+* support sentencepiece
+* support huggingface/tokenizers
 
 ## Citation
 

@@ -179,8 +179,7 @@ class Trainer:
 
     def norm(self, texts):
         for text in texts:
-            for t in normalize(text, 10000, self.isolate_digits):
-                yield t
+            yield text.encode("utf-8")
 
     def train(self, texts, workers=1, batch_size=1000):
         if workers > 1:
@@ -311,7 +310,7 @@ class Tokenizer:
         return faster._tokenize(self, text, alpha)
 
     def tokenize(self, text, alpha=-1):
-        return list(chain(*[self._tokenize(t, alpha) for t in normalize(text)]))
+        return self._tokenize(text.encode("utf-8"), alpha)
 
     def piece_to_id(self, p):
         return self._piece2id[p]

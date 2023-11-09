@@ -51,6 +51,9 @@ pip install bytepiece==0.6.1
 
 BytePiece的所有源码其实也就是单文件，包含`Trainer`和`Tokenizer`两个类，分别对应训练和分词。
 
+流水线脚本文件为`example.py`，包括训练模型、直接使用、sentencepiece调用，huggingface/tokenizers调用。
+若为导出调用，导出相应模型后，按照sentencepiece、huggingface/tokenizers的用法加载导出的模型调用，无需安装BytePiece。
+
 ### 训练
 
 训练Tokenizer只需要引入`Trainer`类：
@@ -130,8 +133,8 @@ print(b' '.join(tokens).decode(errors='ignore'))  # 可视化分词结果
 
 下载开源的BytePiece模型请移步到[models](https://github.com/bojone/bytepiece/tree/main/models)。
 
-## 转换
-
+## 导出使用
+* 支持导出为sentencepiece模型
 `0.6.2`版开始引入`convert_to_sentencepiece`方法，支持将`ensure_unicode`版模型转为sentencepiece模型，并用sentencepiece加载：
 ```python
 from bytepiece import Tokenizer
@@ -145,6 +148,8 @@ tokenizer1.encode('今天天气不错')
 tokenizer2.encode('今天天气不错')
 ```
 对于大部分输入，两个版本的模型都能够获得相同的分词结果和相同的编码ids。但无论如何，bytepiece和sentencepiece的处理逻辑不完全一样，bytepiece更加纯粹一些，而sentencepiece加了很多莫须有的预处理操作，这导致两个版本的模型无法完全对齐。目前已知的问题之一是，当输入包含多个连续换行符(\n)时，分词结果可能会有分歧。
+
+* 支持huggingface/tokenizers调用，参见`example.py`
 
 ## 引用
 
