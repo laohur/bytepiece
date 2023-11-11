@@ -2,7 +2,6 @@
 import os
 import json
 
-# os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 import bytepiece
 import tokenizers
 import base64
@@ -22,6 +21,7 @@ file: bytepiece.model
 
 def bp2sp():
     from bytepiece import Tokenizer
+    os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
     tokenizer1 = Tokenizer("bytepiece.model")
     tokenizer1.convert_to_sentencepiece("bytepiece_sp.model")
@@ -68,12 +68,12 @@ def init_tokenizer(hf_save_dir=None, vocab=[("<unk>", 0)]):
             # pre_tokenizers.PreTokenizer.custom(LanguagePreTokenizer()),
             # pre_tokenizers.UnicodeScripts(),
             # pre_tokenizers.Split(" ?[^(\\s|[.,!?…。，、।۔،])]+", "isolated"),
-            tokenizers.pre_tokenizers.CharDelimiterSplit("\x00"),
-            tokenizers.pre_tokenizers.Punctuation(behavior="contiguous"),
-            tokenizers.pre_tokenizers.Digits(individual_digits=True),
+            # tokenizers.pre_tokenizers.CharDelimiterSplit("\x00"),
+            # tokenizers.pre_tokenizers.Punctuation(behavior="contiguous"),
+            # tokenizers.pre_tokenizers.Digits(individual_digits=True),
             # pre_tokenizers.Metaspace(add_prefix_space=False),
             # pre_tokenizers.ByteLevel(add_prefix_space=False,use_regex=False)
-            # tokenizers.pre_tokenizers.ByteLevel(replace_ment="\x00", add_prefix_space=False),
+            tokenizers.pre_tokenizers.ByteLevel(replace_ment="\x00", add_prefix_space=False),
         ]
     )
     tokenizer.pre_tokenizer = pre_tokenizer
@@ -113,7 +113,7 @@ def bp2hf(bp_model_file, hf_save_dir):
 
 # https://www.huaxiaozhuan.com/%E5%B7%A5%E5%85%B7/huggingface_transformer/chapters/1_tokenizer.html
 def train():
-    baseTokenizer = init_tokenizer()
+    baseTokenizer = init_tokenizer().backend_tokenizer
     normalizer = baseTokenizer.normalizer
     preTokenizer = baseTokenizer.pre_tokenizer
 
@@ -121,13 +121,13 @@ def train():
         def __iter__(self):
             for l in open("data_sample.json"):
                 text = json.loads(l)["text"]
-                normalized_str = normalizer.normalize_str(text)
-                for word, (start, end) in preTokenizer.pre_tokenize_str(normalized_str):
+                # normalized_str = normalizer.normalize_str(text)
+                for word, (start, end) in preTokenizer.pre_tokenize_str(text):
                     yield word
 
     from bytepiece import Trainer
 
-    trainer = Trainer(order=6, max_vocab_size=100000, min_count=32)
+    trainer = Trainer(order=6, max_vocab_size=65536, min_count=32)
     trainer.train(corpus(), workers=64, batch_size=1000)
     trainer.save("bytepiece.model")
 
