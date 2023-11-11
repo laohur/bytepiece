@@ -86,15 +86,15 @@ def init_tokenizer(hf_save_dir=None, vocab=[("<unk>", 0)]):
         eos_token="</s>",
         unk_token="<unk>",
         pad_token="<pad>",
-        unk_id=0,
-        bos_id=1,
-        eos_id=2,
-        pad_id=3,
         # cls_token="<cls>",
         # sep_token="<sep>",
         # mask_token="<mask>",
+        unk_id=0,
+        bos_id=1,
+        eos_id=2,
+        pad_id=3,        
         padding_side="left",
-        clean_up_tokenization_spaces=False,
+        truncation_side="right",
     )
     if hf_save_dir:
         wrapped_tokenizer.save_pretrained(hf_save_dir)
